@@ -1134,7 +1134,6 @@
     background: var(--bg);
     border-bottom: 1px solid var(--border);
     padding: 0 clamp(1.5rem, 5vw, 5rem);
-    overflow: hidden;
     transition: background 0.25s ease;
   }
   .audio-bar.active {
@@ -1236,12 +1235,11 @@
 
   /* speed picker popover */
   .ap-speed-opts {
-    position: absolute; bottom: calc(100% + 6px); left: 50%;
-    transform: translateX(-50%);
+    position: fixed;
     background: var(--bg3); border: 1px solid var(--border2);
     border-radius: 4px; overflow: hidden;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.35);
-    display: none; flex-direction: column; z-index: 999;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.45);
+    display: none; flex-direction: column; z-index: 9999;
     min-width: 58px;
   }
   .ap-speed-opts.open { display: flex; }
@@ -2532,10 +2530,18 @@
       mainAudio.currentTime = parseFloat(apScrubber.value);
     });
 
-    // Speed selector — click label to open/close
+    // Speed selector — position popover below label, then open/close
     apSpeed.addEventListener('click', function(e) {
       e.stopPropagation();
-      apSpeedOpts.classList.toggle('open');
+      if (apSpeedOpts.classList.contains('open')) {
+        apSpeedOpts.classList.remove('open');
+        return;
+      }
+      // Position fixed popover below the speed label
+      const rect = apSpeed.getBoundingClientRect();
+      apSpeedOpts.style.top  = (rect.bottom + 6) + 'px';
+      apSpeedOpts.style.left = rect.left + 'px';
+      apSpeedOpts.classList.add('open');
     });
     document.addEventListener('click', function() {
       apSpeedOpts.classList.remove('open');
