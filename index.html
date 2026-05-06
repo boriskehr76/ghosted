@@ -95,6 +95,7 @@
     background: var(--bg);
     backdrop-filter: blur(12px);
     z-index: 100;
+    overflow: visible;
   }
   .header-inner {
     max-width: 1200px;
@@ -1108,6 +1109,165 @@
     outline-offset: 2px;
   }
 
+  /* ── HEADER AUDIO ICON BUTTON ───────────────────────────── */
+  .audio-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    color: var(--text2);
+    opacity: 0.7;
+    transition: opacity 0.2s ease, color 0.2s ease;
+    outline: none;
+    border-radius: 4px;
+  }
+  .audio-btn:hover { opacity: 1; color: var(--accent); }
+  .audio-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .audio-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; }
+  .audio-btn.is-active { color: var(--accent); opacity: 1; }
+
+  /* ── AUDIO BAR — idle state (notice) ─────────────────── */
+  .audio-bar {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0 clamp(1.5rem, 5vw, 5rem);
+    overflow: hidden;
+    transition: background 0.25s ease;
+  }
+  .audio-bar.active {
+    background: var(--bg2);
+    position: sticky;
+    top: 56px;
+    z-index: 90;
+    border-bottom-color: var(--border2);
+  }
+  .audio-bar-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 42px;
+  }
+
+  /* idle notice */
+  .audio-notice {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: 100%;
+  }
+  .audio-notice-icon {
+    background: none; border: none; cursor: pointer; padding: 0;
+    display: flex; align-items: center; flex-shrink: 0;
+    color: var(--accent); opacity: 0.85; transition: opacity 0.15s;
+  }
+  .audio-notice-icon:hover { opacity: 1; }
+  .audio-notice-icon svg {
+    width: 15px; height: 15px; stroke: currentColor; fill: none;
+  }
+  .audio-notice span {
+    font-family: var(--sans); font-size: 12.5px; color: var(--text2); line-height: 1;
+  }
+  .audio-notice a {
+    color: var(--accent); text-decoration: none; font-weight: 500;
+    border-bottom: 1px solid transparent; transition: border-color 0.15s; cursor: pointer;
+  }
+  .audio-notice a:hover { border-color: var(--accent); }
+
+  /* player (shown when active) */
+  .audio-player-bar {
+    display: none;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+  }
+  .audio-bar.active .audio-notice  { display: none; }
+  .audio-bar.active .audio-player-bar { display: flex; }
+  /* bar height tighter when player active */
+  .audio-bar.active .audio-bar-inner { height: 36px; }
+
+  /* play/pause button */
+  .ap-playbtn {
+    background: none; border: none; cursor: pointer; padding: 0;
+    color: var(--accent); flex-shrink: 0; display: flex; align-items: center;
+    transition: opacity 0.15s;
+  }
+  .ap-playbtn:hover { opacity: 0.65; }
+  .ap-playbtn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; }
+
+  /* scrubber track — compact, single-line with inline times */
+  .ap-track-wrap {
+    flex: 1; display: flex; align-items: center; gap: 0.5rem; min-width: 0;
+  }
+  .ap-time {
+    font-family: var(--mono); font-size: 10px; color: var(--text3);
+    flex-shrink: 0; white-space: nowrap;
+  }
+  .ap-scrubber {
+    -webkit-appearance: none; appearance: none;
+    flex: 1; height: 2px; border-radius: 2px; cursor: pointer; outline: none;
+    background: linear-gradient(to right, var(--accent) 0%, var(--border2) 0%);
+    min-width: 0;
+  }
+  .ap-scrubber::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--accent); cursor: pointer;
+    box-shadow: 0 0 0 2px var(--bg2);
+  }
+  .ap-scrubber::-moz-range-thumb {
+    width: 9px; height: 9px; border-radius: 50%; border: none;
+    background: var(--accent); cursor: pointer;
+  }
+
+  /* speed selector */
+  .ap-speed {
+    font-family: var(--mono); font-size: 10px; color: var(--text2);
+    cursor: pointer; flex-shrink: 0; padding: 2px 5px;
+    border: 1px solid var(--border2); border-radius: 3px;
+    background: none; transition: color 0.15s, border-color 0.15s;
+    user-select: none; line-height: 1.4;
+  }
+  .ap-speed:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* speed picker popover */
+  .ap-speed-opts {
+    position: absolute; bottom: calc(100% + 6px); left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg3); border: 1px solid var(--border2);
+    border-radius: 4px; overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+    display: none; flex-direction: column; z-index: 999;
+    min-width: 58px;
+  }
+  .ap-speed-opts.open { display: flex; }
+  .ap-speed-opt {
+    font-family: var(--mono); font-size: 11px; padding: 6px 12px;
+    cursor: pointer; color: var(--text2); text-align: center;
+    transition: background 0.1s, color 0.1s; border: none; background: none;
+    white-space: nowrap;
+  }
+  .ap-speed-opt:hover { background: var(--bg2); color: var(--accent); }
+  .ap-speed-opt.selected { color: var(--accent); font-weight: 600; }
+
+  /* speed wrapper for positioning */
+  .ap-speed-wrap { position: relative; flex-shrink: 0; display: flex; }
+
+  /* close button */
+  .ap-close {
+    background: none; border: none; cursor: pointer; padding: 2px 4px;
+    color: var(--text3); flex-shrink: 0; display: flex; align-items: center;
+    transition: color 0.15s; margin-left: 0.25rem;
+  }
+  .ap-close:hover { color: var(--text); }
+  .ap-close svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
+  /* when bar is hidden but audio playing */
+  .audio-bar.hidden { display: none; }
+
 </style>
 </head>
 <body>
@@ -1128,6 +1288,10 @@
     <div class="header-right">
       <button class="hamburger" id="hamburger" aria-label="Open navigation">
         <span></span><span></span><span></span>
+      </button>
+      <!-- AUDIO BUTTON -->
+      <button class="audio-btn" id="audio-btn" aria-label="Listen to this report" title="Listen to this report">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14a9 9 0 0 1 18 0"/><rect x="2" y="14" width="4" height="6" rx="2"/><rect x="18" y="14" width="4" height="6" rx="2"/></svg>
       </button>
       <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode" title="Toggle light/dark mode">
         <span class="toggle-icon" id="theme-icon-moon">&#9790;</span>
@@ -1150,6 +1314,62 @@
   <a href="#sources" class="mobile-nav-link">Sources</a>
   <a href="#connect" class="mobile-nav-link">Connect</a>
 </nav>
+
+<!-- AUDIO BAR -->
+<div class="audio-bar" id="audio-bar">
+  <div class="audio-bar-inner">
+
+    <!-- IDLE NOTICE -->
+    <div class="audio-notice" id="audio-notice">
+      <button class="audio-notice-icon" id="notice-icon-btn" aria-label="Play audio version">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14a9 9 0 0 1 18 0"/><rect x="2" y="14" width="4" height="6" rx="2"/><rect x="18" y="14" width="4" height="6" rx="2"/></svg>
+      </button>
+      <span>Prefer to listen? <a id="tldr-audio-link">Play the audio version</a> — 18 min</span>
+    </div>
+
+    <!-- PLAYER (shown when active) -->
+    <div class="audio-player-bar" id="audio-player-bar">
+
+      <!-- hidden native audio element -->
+      <audio id="main-audio" preload="none">
+        <source src="ghosted-narration.mp3" type="audio/mpeg">
+      </audio>
+
+      <!-- play/pause -->
+      <button class="ap-playbtn" id="ap-playbtn" aria-label="Play / Pause">
+        <svg id="ap-play-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none"/>
+        </svg>
+      </button>
+
+      <!-- scrubber: time · bar · time · speed · close (all inline) -->
+      <div class="ap-track-wrap">
+        <span class="ap-time" id="ap-current">0:00</span>
+        <input class="ap-scrubber" id="ap-scrubber" type="range" min="0" max="100" value="0" step="0.1">
+        <span class="ap-time" id="ap-duration">—</span>
+      </div>
+
+      <!-- speed -->
+      <div class="ap-speed-wrap">
+        <div class="ap-speed" id="ap-speed">1×</div>
+        <div class="ap-speed-opts" id="ap-speed-opts">
+          <button class="ap-speed-opt" data-speed="0.75">0.75×</button>
+          <button class="ap-speed-opt selected" data-speed="1">1×</button>
+          <button class="ap-speed-opt" data-speed="1.25">1.25×</button>
+          <button class="ap-speed-opt" data-speed="1.5">1.5×</button>
+          <button class="ap-speed-opt" data-speed="1.75">1.75×</button>
+          <button class="ap-speed-opt" data-speed="2">2×</button>
+        </div>
+      </div>
+
+      <!-- close -->
+      <button class="ap-close" id="ap-close" aria-label="Hide player">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+    </div><!-- /audio-player-bar -->
+  </div>
+</div>
 
 <!-- HERO -->
 <div class="hero">
@@ -2208,6 +2428,131 @@
   document.addEventListener('DOMContentLoaded', function() {
     const toggle = document.getElementById('theme-toggle');
     const html   = document.documentElement;
+
+    // ── AUDIO PLAYER ──────────────────────────────────────────
+    const audioBtn      = document.getElementById('audio-btn');
+    const audioBar      = document.getElementById('audio-bar');
+    const mainAudio     = document.getElementById('main-audio');
+    const tldrLink      = document.getElementById('tldr-audio-link');
+    const noticeIconBtn = document.getElementById('notice-icon-btn');
+    const apPlayBtn     = document.getElementById('ap-playbtn');
+    const apPlayIcon    = document.getElementById('ap-play-icon');
+    const apScrubber    = document.getElementById('ap-scrubber');
+    const apCurrent     = document.getElementById('ap-current');
+    const apDuration    = document.getElementById('ap-duration');
+    const apSpeed       = document.getElementById('ap-speed');
+    const apSpeedOpts   = document.getElementById('ap-speed-opts');
+    const apClose       = document.getElementById('ap-close');
+
+    const PLAY_ICON  = '<polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none"/>';
+    const PAUSE_ICON = '<line x1="6" y1="4" x2="6" y2="20" stroke-width="2.5"/><line x1="18" y1="4" x2="18" y2="20" stroke-width="2.5"/>';
+
+    function fmtTime(s) {
+      if (isNaN(s) || s === Infinity) return '—';
+      const m = Math.floor(s / 60);
+      const sec = Math.floor(s % 60);
+      return m + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
+    function activatePlayer() {
+      audioBar.classList.remove('hidden');
+      audioBar.classList.add('active');
+      audioBtn.classList.add('is-active');
+    }
+
+    function startPlayback() {
+      activatePlayer();
+      mainAudio.play();
+    }
+
+    // Header icon: if bar hidden, re-show it; else toggle play/pause
+    audioBtn.addEventListener('click', function() {
+      if (audioBar.classList.contains('hidden')) {
+        activatePlayer(); // re-show, keep playing
+      } else if (!audioBar.classList.contains('active')) {
+        startPlayback();
+      } else {
+        if (mainAudio.paused) { mainAudio.play(); } else { mainAudio.pause(); }
+      }
+    });
+
+    // Notice icon button — activate + play
+    noticeIconBtn.addEventListener('click', function() {
+      startPlayback();
+    });
+
+    // Notice bar text link — activate + play
+    tldrLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      startPlayback();
+    });
+
+    // Play / pause button in player bar
+    apPlayBtn.addEventListener('click', function() {
+      if (mainAudio.paused) { mainAudio.play(); } else { mainAudio.pause(); }
+    });
+
+    // Close — hide bar, keep audio playing
+    apClose.addEventListener('click', function() {
+      audioBar.classList.add('hidden');
+    });
+
+    // Sync icon to play state
+    mainAudio.addEventListener('play', function() {
+      apPlayIcon.innerHTML = PAUSE_ICON;
+      audioBtn.classList.add('is-active');
+    });
+    mainAudio.addEventListener('pause', function() {
+      apPlayIcon.innerHTML = PLAY_ICON;
+    });
+    mainAudio.addEventListener('ended', function() {
+      apPlayIcon.innerHTML = PLAY_ICON;
+      apScrubber.value = 0;
+      apCurrent.textContent = '0:00';
+      audioBtn.classList.remove('is-active');
+    });
+
+    // Duration
+    mainAudio.addEventListener('loadedmetadata', function() {
+      apDuration.textContent = fmtTime(mainAudio.duration);
+      apScrubber.max = mainAudio.duration;
+    });
+
+    // Time update — scrubber fill + current time
+    mainAudio.addEventListener('timeupdate', function() {
+      const pct = mainAudio.duration ? (mainAudio.currentTime / mainAudio.duration) * 100 : 0;
+      apScrubber.style.background =
+        'linear-gradient(to right, var(--accent) ' + pct + '%, var(--border2) ' + pct + '%)';
+      apScrubber.value = mainAudio.currentTime;
+      apCurrent.textContent = fmtTime(mainAudio.currentTime);
+    });
+
+    // Scrub
+    apScrubber.addEventListener('input', function() {
+      mainAudio.currentTime = parseFloat(apScrubber.value);
+    });
+
+    // Speed selector — click label to open/close
+    apSpeed.addEventListener('click', function(e) {
+      e.stopPropagation();
+      apSpeedOpts.classList.toggle('open');
+    });
+    document.addEventListener('click', function() {
+      apSpeedOpts.classList.remove('open');
+    });
+
+    // Speed options
+    document.querySelectorAll('.ap-speed-opt').forEach(function(opt) {
+      opt.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const speed = parseFloat(opt.dataset.speed);
+        mainAudio.playbackRate = speed;
+        apSpeed.textContent = opt.textContent;
+        document.querySelectorAll('.ap-speed-opt').forEach(function(o) { o.classList.remove('selected'); });
+        opt.classList.add('selected');
+        apSpeedOpts.classList.remove('open');
+      });
+    });
 
     function applyTheme(theme) {
       html.setAttribute('data-theme', theme);
